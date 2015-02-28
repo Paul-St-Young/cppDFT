@@ -5,7 +5,6 @@ set (SRC_DIR src)
 set(CMAKE_CXX_FLAGS "-std=c++11")
 
 # find eigen
-find_package(Eigen3 REQUIRED)
 set(EIGEN3_DIR "$ENV{EIGEN3_INCLUDE_DIR}")
 if (EIGEN3_DIR)
 	include_directories(${EIGEN3_DIR})
