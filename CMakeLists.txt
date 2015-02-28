@@ -21,10 +21,13 @@ add_library(pset
 	${SRC_DIR}/Particle/ParticleSet.cpp
 )
 
+add_library(func
+	${SRC_DIR}/Function/ExternalPotential.cpp
+)
 add_executable(cppDFT
 	${SRC_DIR}/main.cpp
 )
 
 # link executable
-target_link_libraries(cppDFT pset m)
+target_link_libraries(cppDFT pset func m)
 
