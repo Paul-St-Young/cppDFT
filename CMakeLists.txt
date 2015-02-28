@@ -22,12 +22,19 @@ add_library(pset
 )
 
 add_library(func
+	${SRC_DIR}/Function/PlaneWave.cpp
+	${SRC_DIR}/Function/Density.cpp
 	${SRC_DIR}/Function/ExternalPotential.cpp
+	${SRC_DIR}/Function/HatreePotential.cpp
 )
-add_executable(cppDFT
-	${SRC_DIR}/main.cpp
+
+add_library(ks
+	${SRC_DIR}/Kohn-Sham/Hamiltonian.cpp
 )
 
 # link executable
+add_executable(cppDFT
+	${SRC_DIR}/main.cpp
+)
 target_link_libraries(cppDFT pset func m)
 
