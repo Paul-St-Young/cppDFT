@@ -1,2 +1,51 @@
-# cppDFT
-Basic Density Functional Theory code - made to be modular
+Getting Started
+---------------
+
+### To build
+    mkdir build
+    cd build
+    cmake ..
+    make
+
+### to run
+    ./cppDFT 
+
+### requirement
+1. cmake 2.8.8 or above
+2. c++11 compatible compiler
+3. eigen3 include directory saved in EIGEN3\_INCLUDE\_DIR environment variable
+
+Class Structure
+---------------
+
+### Particle Management
+* Particle
+* ParticlePool
+* ParticleSet
+
+A particle is basically a collection of attributes such as posiotion, velocity, acceleration, mass and charge. A ParticlePool contains physical particles and is responsible for their memory allocation, deallocation and initialization. A ParticleSet maintains a list of pointers to the particles of interest.
+  
+  The idea is to have a "heavy" object ParticlePool that manages memory allocation and then have mutiple "light" objects ParticleSet to manipulate the data. A typical starting point is
+  
+    ParticlePool pPool(8); 
+    pPool.initCubicPositions(1.0);
+    ParticleSet gPset(pPool.myParticles());
+  
+  which:
+  1. initialize 3 particles at the origin
+  2. call an initialization method to redistribute the particles - most simulations don't allow two particles at the same position
+  3. allow a particle set to control some particles in the pool (partial pool control is not yet implemented, so all particle sets are global particle sets at the moment)
+
+### Basis
+* PlaneWave
+
+A basis function takes a position and returns a value
+
+### Function
+* Density
+* ExternalPotential
+* HartreePotential
+
+A function, like basis, also takes a position and returns a value. However, most functions need to be initialized as a linear combination of basis functions.
+
+

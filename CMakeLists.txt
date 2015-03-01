@@ -20,12 +20,11 @@ add_library(pset
 	${SRC_DIR}/Particle/ParticleSet.cpp
 )
 
-#add_library(basis
-#	${SRC_DIR}/Basis/PlaneWave.cpp
-#)
+add_library(basis
+	${SRC_DIR}/Basis/PlaneWave.cpp
+)
 
 add_library(func
-	${SRC_DIR}/Basis/PlaneWave.cpp
 	${SRC_DIR}/Function/Function.cpp
 	${SRC_DIR}/Function/Density.cpp
 	${SRC_DIR}/Function/ExternalPotential.cpp
@@ -40,5 +39,5 @@ add_library(func
 add_executable(cppDFT
 	${SRC_DIR}/main.cpp
 )
-target_link_libraries(cppDFT pset func m)
+target_link_libraries(cppDFT pset func basis m)
 
