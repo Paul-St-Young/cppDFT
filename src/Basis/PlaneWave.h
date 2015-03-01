@@ -1,15 +1,15 @@
 #ifndef _PLANEWAVE_H
 #define _PLANEWAVE_H
 
-#include "Function.h"
+#include "Basis.h"
 #include <complex>
 
-class PlaneWave{
+class PlaneWave : public Basis {
 PosType _k;
 public:
     PlaneWave(PosType k) : _k(k) {};
-    std::complex<RealType> operator()(PosType r);
-    
+    ComplexType operator()(PosType r);
+    int id(){return (int)_k.sum();};
 };
 
 #endif

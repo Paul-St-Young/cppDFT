@@ -20,16 +20,21 @@ add_library(pset
 	${SRC_DIR}/Particle/ParticleSet.cpp
 )
 
+#add_library(basis
+#	${SRC_DIR}/Basis/PlaneWave.cpp
+#)
+
 add_library(func
-	${SRC_DIR}/Function/PlaneWave.cpp
+	${SRC_DIR}/Basis/PlaneWave.cpp
+	${SRC_DIR}/Function/Function.cpp
 	${SRC_DIR}/Function/Density.cpp
 	${SRC_DIR}/Function/ExternalPotential.cpp
 	${SRC_DIR}/Function/HatreePotential.cpp
 )
 
-add_library(ks
-	${SRC_DIR}/Kohn-Sham/Hamiltonian.cpp
-)
+#add_library(ks
+#	${SRC_DIR}/Kohn-Sham/Hamiltonian.cpp
+#)
 
 # link executable
 add_executable(cppDFT

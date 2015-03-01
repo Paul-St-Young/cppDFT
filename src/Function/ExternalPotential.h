@@ -4,13 +4,13 @@
 #include "Function.h"
 #include "../Particle/ParticleSet.h"
 
-class ExternalPotential{
+class ExternalPotential : public Function{
 ParticleSet _pset;
 public:
-    ExternalPotential(ParticleSet pset) : _pset(pset) {};
+    ExternalPotential(ParticleSet pset) : Function(0), _pset(pset) {};
     ~ExternalPotential(){};
     
-    RealType operator()(PosType r);
+    ComplexType operator()(PosType r);              // override operator() since external potential is easy to calculate
     
 };
 

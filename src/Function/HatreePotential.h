@@ -3,12 +3,12 @@
 
 #include "Density.h"
 
-class HatreePotential{
+class HatreePotential : public Function{
 Density* _n;
 public:
 
-    HatreePotential(Density* n) : _n(n) {};    
-    RealType operator()(PosType r);
+    HatreePotential(Density* n, int nbasis) : Function(nbasis), _n(n) {};   
+    void initPlaneWaves(std::vector<PosType> K);
     
 };
 

@@ -3,11 +3,9 @@
 
 #include "Function.h"
 
-class Density{
+class Density : public Function {
 public:
-    
-    RealType operator()(PosType r);
-    
+    Density(int nbasis) : Function(nbasis){};
 };
 
 #endif
