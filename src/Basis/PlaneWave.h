@@ -10,6 +10,7 @@ public:
     PlaneWave(PosType k) : _k(k) {};
     ComplexType operator()(PosType r);
     int id(){return (int)_k.sum();};
+    PosType k(){return _k;}
 };
 
 #endif

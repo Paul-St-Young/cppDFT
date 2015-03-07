@@ -11,6 +11,7 @@ public:
     ~ExternalPotential(){};
     
     ComplexType operator()(PosType r);              // override operator() since external potential is easy to calculate
+    void initPlaneWaves(std::vector<PosType> K);
     
 };
 

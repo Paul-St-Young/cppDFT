@@ -18,6 +18,7 @@ void Function::initPlaneWaves(std::vector<PosType> K){
         _c[i]=0;
     }
     _initialized=true;
+    _purePlaneWave=true;
 }
 
 Function::~Function(){

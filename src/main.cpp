@@ -40,6 +40,7 @@ int main(){
     ExternalPotential   Vext(gPset);
     HatreePotential     Vh(&n,nbasis);
     n.initPlaneWaves(K);
+    Vext.initPlaneWaves(K);
     Vh.initPlaneWaves(K);
     
     // self-consistently solve KS equation

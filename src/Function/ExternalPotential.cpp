@@ -7,3 +7,10 @@ ComplexType ExternalPotential::operator()(PosType r){
     }
     return pot;
 }
+
+void ExternalPotential::initPlaneWaves(std::vector<PosType> K){
+    Function::initPlaneWaves(K);
+    for (int i=0;i<_nbasis;i++){
+        _c[i] = 8*std::pow(M_PI,2)/_b[i]->k().squaredNorm();
+    }
+}

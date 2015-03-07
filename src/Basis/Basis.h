@@ -18,6 +18,7 @@ public:
     virtual int id(){
         std::cerr << "Basis::id() being called" << std::endl;
     };
+    virtual PosType k(){}; // return the k vector of a plane wave
     
 };
 
