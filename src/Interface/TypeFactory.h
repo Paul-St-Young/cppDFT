@@ -8,7 +8,7 @@
 
 typedef float                   RealType   ;
 typedef std::complex<RealType>  ComplexType;
-typedef Eigen::VectorXf         PosType    ;
+typedef Eigen::Vector3f         PosType    ;
 typedef Eigen::ArrayXf          ArrayType  ;
 
 #endif

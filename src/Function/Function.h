@@ -29,7 +29,7 @@ public:
     virtual ComplexType operator()(PosType r);              // purpose in life of a function
     virtual RealType& operator[](int i){return _c[i];};     // allow accessing and changing coeffients
     
-    virtual void initPlaneWaves(std::vector<PosType> K);    // initialized in the list of given plane wave basis
+    virtual void initPlaneWaves(std::vector<PosType> K, ArrayType C);    // initialized in the list of given plane wave basis
 };
 
 class _Function_UninitializedBasisError{};

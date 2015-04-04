@@ -7,7 +7,7 @@
 class PlaneWave : public Basis {
 PosType _k;
 public:
-    PlaneWave(PosType k) : _k(k) {};
+    PlaneWave(PosType k);
     ComplexType operator()(PosType r);
     int id(){return (int)_k.sum();};
     PosType k(){return _k;}

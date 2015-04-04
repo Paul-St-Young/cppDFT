@@ -23,5 +23,18 @@ add_executable(particleTest
 	${SRC_DIR}/Particle/ParticleSet.cpp
 )
 
+add_executable(basisTest 
+    ../testPlaneWave.cpp
+    ${SRC_DIR}/Basis/PlaneWave.cpp
+)
+
+add_executable(functionTest 
+    ../testFunction.cpp
+    ${SRC_DIR}/Basis/PlaneWave.cpp
+    ${SRC_DIR}/Function/Function.cpp
+)
+
 target_link_libraries(particleTest ${GTEST_LIBRARIES} pthread)
+target_link_libraries(basisTest ${GTEST_LIBRARIES} pthread)
+target_link_libraries(functionTest ${GTEST_LIBRARIES} pthread)
 

@@ -12,10 +12,10 @@ ComplexType Function::operator()(PosType r){
     return value;
 };
 
-void Function::initPlaneWaves(std::vector<PosType> K){
+void Function::initPlaneWaves(std::vector<PosType> K,ArrayType C){
     for (int i=0;i<_nbasis;i++){
         _b[i] = new PlaneWave(K[i]);
-        _c[i]=0;
+        _c[i]=C[i];
     }
     _initialized=true;
     _purePlaneWave=true;
