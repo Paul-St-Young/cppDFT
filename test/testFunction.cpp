@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "../src/Basis/Gaussian.h"
 #include "../src/Function/Function.h"
 
 using namespace std;
@@ -29,6 +30,19 @@ TEST(FunctionTest,Cosx){
     r << 1,0,0;
     ComplexType fr(0.540302,0);
     EXPECT_LT( abs(fr-f(r)), EPS );
+}
+
+// ----------------------- Test Gaussian ----------------------- //
+TEST(FunctionTest,Gaussian){
+	Function f(1);
+	PosType ro; ro << 1,0,0;
+	Gaussian g(1.0,ro,1.0);
+	vector<Basis*> v;
+	v.push_back(&g);
+	
+	f.initBasis(v,ArrayType::Ones(1));
+	PosType r; r << 0,0,0;
+	EXPECT_LT( abs(f(r)-(ComplexType)0.60653065971263342)  ,EPS);
 }
 
 // ======================= Test Main ======================= //

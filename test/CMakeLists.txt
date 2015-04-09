@@ -32,6 +32,7 @@ add_executable(basisTest
 add_executable(functionTest 
     ../testFunction.cpp
     ${SRC_DIR}/Basis/PlaneWave.cpp
+    ${SRC_DIR}/Basis/Gaussian.cpp
     ${SRC_DIR}/Function/Function.cpp
 )
 

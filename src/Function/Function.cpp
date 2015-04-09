@@ -1,6 +1,12 @@
 #include "Function.h"
 #include "../Basis/PlaneWave.h"
 
+Function::Function(int nbasis) : _nbasis(nbasis), _initialized(false), _allocated(false)
+  , _purePlaneWave(false), _grid_initialized(false) { 
+    _c.resize(_nbasis);
+    _b = new Basis*[_nbasis];
+};
+
 ComplexType Function::operator()(PosType r){
     if (!_initialized) throw _Function_UninitializedBasisError();
     ComplexType value=0;
@@ -12,12 +18,22 @@ ComplexType Function::operator()(PosType r){
     return value;
 };
 
+void Function::initBasis(std::vector<Basis*> B, ArrayType C){
+    for (int i=0;i<_nbasis;i++){
+        _b[i] = B[i];
+        _c[i] = C[i];
+    }
+    _initialized=true;
+    _allocated=false;
+}
+
 void Function::initPlaneWaves(std::vector<PosType> K,ArrayType C){
     for (int i=0;i<_nbasis;i++){
         _b[i] = new PlaneWave(K[i]);
         _c[i]=C[i];
     }
     _initialized=true;
+    _allocated=true;
     _purePlaneWave=true;
 }
 
@@ -41,7 +57,7 @@ void Function::updateGrid(){
 }
 
 Function::~Function(){
-    if (_initialized){
+    if (_allocated){
         for (int i=0;i<_nbasis;i++){
             delete _b[i];
         }
