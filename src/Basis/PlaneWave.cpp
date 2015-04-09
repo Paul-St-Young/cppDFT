@@ -3,7 +3,7 @@
 
 using namespace std;
 
-PlaneWave::PlaneWave(PosType k){
+PlaneWave::PlaneWave(PosType k, int id) : Basis(id) {
     _k << k[0],k[1],k[2];
 }
 

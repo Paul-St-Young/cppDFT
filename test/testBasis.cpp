@@ -6,7 +6,7 @@ using namespace std;
 
 #define EPS 1e-3
 #include <iostream>
-// ----------------------- Test PW ----------------------- //
+// ----------------------- Test Constructor ----------------------- //
 TEST(BasisTest,PWSingleConstructor){
     PosType k;
     k << 1,0,0;
@@ -15,6 +15,25 @@ TEST(BasisTest,PWSingleConstructor){
 	EXPECT_EQ(k,p.k());
 }
 
+TEST(BasisTest,G0){
+	PosType ro;
+    ro << 0,0,0;
+	Gaussian g(1.0,ro,1.0);
+	PosType r;
+	r << 0,0,0;
+	EXPECT_EQ((ComplexType)1.0,g(r));
+}
+
+TEST(BasisTest,G1){
+    PosType ro;
+    ro << 0,0,0;
+	Gaussian g(1.0,ro,1.0);
+	PosType r;
+	r << 1,0,0;
+	EXPECT_LT( abs(g(r)-(ComplexType)0.60653065971263342)  ,EPS);
+}
+
+// ----------------------- Test Cos(x) ----------------------- //
 TEST(BasisTest,Cosx){
     PosType k;
     k << 1,0,0;
@@ -28,23 +47,6 @@ TEST(BasisTest,Cosx){
     ComplexType pr(0.540302,0);
     EXPECT_LT( abs(pr-(p(r)+p1(r))/(ComplexType)2), EPS );
 }
-
-// ----------------------- Test Gaussian ----------------------- //
-TEST(BasisTest,G0){
-	Gaussian g(1.0,0.0,1.0);
-	PosType r;
-	r << 0,0,0;
-	EXPECT_EQ((ComplexType)1.0,g(r));
-}
-
-TEST(BasisTest,G1){
-	Gaussian g(1.0,0.0,1.0);
-	PosType r;
-	r << 1,0,0;
-	EXPECT_LT( abs(g(r)-0.36787944117144233)  ,EPS);
-}
-
-
 
 // ======================= Test Main ======================= //
 int main(int argc, char **argv){

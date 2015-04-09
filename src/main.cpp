@@ -49,14 +49,15 @@ int main(){
     const int nx=10;
     RealType dx=(xmax-xmin)/nx;
     
-    Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic> H(nx*nx*nx,nx*nx*nx);
+    //Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic> H(nx*nx*nx,nx*nx*nx);
+    Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic>* H = new Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic>(nx*nx*nx,nx*nx*nx);
     PosType r;
     // Potential is diagonal in real space
     for (int i=0;i<nx;i++){
         for (int j=0;j<nx;j++){
             for (int k=0;k<nx;k++){
                 r << dx*i+xmin, dx*j+xmin, dx*k+xmin;
-                H(i*nx*nx+j*nx+k,i*nx*nx+j*nx+k) = Vh(r)+Vext(r);
+                (*H)(i*nx*nx+j*nx+k,i*nx*nx+j*nx+k) = Vh(r)+Vext(r);
             }
         }
     }

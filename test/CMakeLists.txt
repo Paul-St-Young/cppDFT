@@ -24,8 +24,9 @@ add_executable(particleTest
 )
 
 add_executable(basisTest 
-    ../testPlaneWave.cpp
+    ../testBasis.cpp
     ${SRC_DIR}/Basis/PlaneWave.cpp
+    ${SRC_DIR}/Basis/Gaussian.cpp
 )
 
 add_executable(functionTest 

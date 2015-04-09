@@ -2,14 +2,12 @@
 #define _PLANEWAVE_H
 
 #include "Basis.h"
-#include <complex>
 
 class PlaneWave : public Basis {
 PosType _k;
 public:
-    PlaneWave(PosType k);
+    PlaneWave(PosType k, int id=-1);
     ComplexType operator()(PosType r);
-    int id(){return (int)_k.sum();};
     PosType k(){return _k;}
 };
 

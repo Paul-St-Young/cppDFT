@@ -18,13 +18,19 @@ protected:
     ArrayType _c;       // list of coeffients, not so protected actually
     bool _initialized;  // is the basis initialized?
     bool _purePlaneWave; // is there only plane wave in the basis?
+    
+    VectorType *_grid;  // real space grid
+    RealType _xmin, _xmax; int _nx;
+    bool _grid_initialized;
 public:
-    Function(int nbasis) : _nbasis(nbasis), _initialized(false), _purePlaneWave(false) { 
+    Function(int nbasis) : _nbasis(nbasis), _initialized(false), _purePlaneWave(false), _grid_initialized(false) { 
         _c.resize(_nbasis);
         _b = new Basis*[_nbasis];
     };
     ~Function();
     bool purePlaneWave(){return _purePlaneWave;};
+    void initGrid(RealType xmin, RealType xmax, int nx);
+    void updateGrid();
     
     virtual ComplexType operator()(PosType r);              // purpose in life of a function
     virtual RealType& operator[](int i){return _c[i];};     // allow accessing and changing coeffients

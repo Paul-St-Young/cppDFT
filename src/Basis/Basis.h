@@ -9,15 +9,15 @@ A basis function takes a real space coordinate and gives back a number
 #include <iostream>
 
 class Basis{
-
+protected:
+int _id;
 public:
-    Basis(){};
+    Basis(int id) : _id(id) {};
     ~Basis(){};
-    
     virtual ComplexType operator()(PosType r){};
-    virtual int id(){
-        std::cerr << "Basis::id() being called" << std::endl;
-    };
+    virtual int id(){return _id;};
+    
+    // specialized
     virtual PosType k(){}; // return the k vector of a plane wave
     
 };
