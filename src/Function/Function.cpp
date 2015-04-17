@@ -1,6 +1,8 @@
 #include "Function.h"
 #include "../Basis/PlaneWave.h"
 
+#include <sstream>
+
 Function::Function(int nbasis) : _nbasis(nbasis), _initialized(false), _allocated(false)
   , _purePlaneWave(false), _grid_initialized(false) { 
     _c.resize(_nbasis);

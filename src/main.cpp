@@ -1,11 +1,13 @@
 #include <iostream>
 #include <vector>
+#include <fftw3.h>
 
 #include "Particle/ParticleSet.h"
 #include "Basis/PlaneWave.h"
 #include "Function/Density.h"
 #include "Function/ExternalPotential.h"
 #include "Function/HatreePotential.h"
+#include "Kohn-Sham/Hamiltonian.h"
 
 using namespace std;
 
@@ -37,32 +39,31 @@ int main(){
     
     // guess a density and initialize the potentials
     Density             n(nbasis);
+    n.initPlaneWaves(K,ArrayType::Zero(nbasis)); n[1]=1;
+    
     ExternalPotential   Vext(gPset);
     HatreePotential     Vh(&n,nbasis);
-    
-    n.initPlaneWaves(K,ArrayType::Zero(nbasis));
     Vh.initPlaneWaves(K);
     
-    // build Hamiltonian on a real space mesh
-    RealType xmin=-1.0;
+    /*RealType xmin=-1.0;
     RealType xmax=1.0;
-    const int nx=10;
+    const int nx=3;
     RealType dx=(xmax-xmin)/nx;
     
-    //Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic> H(nx*nx*nx,nx*nx*nx);
-    Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic>* H = new Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic>(nx*nx*nx,nx*nx*nx);
-    PosType r;
-    // Potential is diagonal in real space
-    for (int i=0;i<nx;i++){
-        for (int j=0;j<nx;j++){
-            for (int k=0;k<nx;k++){
-                r << dx*i+xmin, dx*j+xmin, dx*k+xmin;
-                (*H)(i*nx*nx+j*nx+k,i*nx*nx+j*nx+k) = Vh(r)+Vext(r);
-            }
-        }
-    }
-    // Laplacian operator is not
-    // H += lap3D(nx)
+    n.initGrid(xmin,xmax,nx);
+    fftw_complex *in, *out;
+    fftw_plan p;
+    in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * pow(nx,3) );
+    out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * pow(nx,3) );
+    p = fftw_plan_dft_3d(nx,nx,nx, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_execute(p);
+    fftw_destroy_plan(p);
+    fftw_free(in);
+    fftw_free(out);*/
+   
+    Hamiltonian H(nbasis);
+    H.update(n);
+    cout << *H.myHam() << endl;
     
     // self-consistently solve KS equation
     for (int step=0;step<max_it;step++){

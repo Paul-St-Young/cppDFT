@@ -29,8 +29,11 @@ public:
     bool purePlaneWave(){return _purePlaneWave;};
     void initGrid(RealType xmin, RealType xmax, int nx);
     void updateGrid();
+    VectorType* myGrid(){return _grid;};
+    Basis** myBasis(){return _b;};
     
-    virtual ComplexType operator()(PosType r);              // purpose in life of a function
+    virtual ComplexType kEvaluate(PosType k){};             // evaluate in k space
+    virtual ComplexType operator()(PosType r);              // purpose in life of a function (evaluate in real space)
     virtual RealType& operator[](int i){return _c[i];};     // allow accessing and changing coeffients
     
     virtual void initBasis(std::vector<Basis*> B, ArrayType C); // initialized in the list of given basis

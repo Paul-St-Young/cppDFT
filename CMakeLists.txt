@@ -29,15 +29,12 @@ add_library(func
 	${SRC_DIR}/Function/Density.cpp
 	${SRC_DIR}/Function/ExternalPotential.cpp
 	${SRC_DIR}/Function/HatreePotential.cpp
+    ${SRC_DIR}/Kohn-Sham/Hamiltonian.cpp
 )
-
-#add_library(ks
-#	${SRC_DIR}/Kohn-Sham/Hamiltonian.cpp
-#)
 
 # link executable
 add_executable(cppDFT
 	${SRC_DIR}/main.cpp
 )
-target_link_libraries(cppDFT pset func basis m)
+target_link_libraries(cppDFT pset func basis m fftw3)
 
