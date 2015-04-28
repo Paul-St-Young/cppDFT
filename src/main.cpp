@@ -9,12 +9,17 @@
 #include "Function/HatreePotential.h"
 #include "Kohn-Sham/Hamiltonian.h"
 
+#include <cmath>
+#define USE_MATH_DEFINES
+
 using namespace std;
 
 int main(){
 
     int max_it=1;
     int nbasis=26; // number of basis functions, k=(0,0,0) is thrown out
+    double L=1.0; // Bohr
+    double Ecut=10.0; // Hartree
 
     // Put a hydrogen ion at the origin
     ParticlePool pPool(1);
@@ -27,11 +32,12 @@ int main(){
     
     // choose a set of basis functions
     vector<PosType> K;
+    int maxIdx=ceil( sqrt(2*Ecut)*L/2*M_PI );
     PosType kvec(_DFT_DIM);
-    for (int i=-1;i<=1;i++){
-        for (int j=-1;j<=1;j++){
-            for (int k=-1;k<=1;k++){
-                kvec << i,j,k;
+    for (int i=-maxIdx;i<=maxIdx;i++){
+        for (int j=-maxIdx;j<=maxIdx;j++){
+            for (int k=-maxIdx;k<=maxIdx;k++){
+                kvec << 2*M_PI/L*i,2*M_PI/L*j,2*M_PI/L*k;
                 if (i!=0 || j!=0 || k!=0) K.push_back(kvec);
             }
         }
@@ -42,8 +48,7 @@ int main(){
     n.initPlaneWaves(K,ArrayType::Zero(nbasis)); n[1]=1;
     
     ExternalPotential   Vext(gPset);
-    HatreePotential     Vh(&n,nbasis);
-    Vh.initPlaneWaves(K);
+    Vext.initPlaneWaves(K);
     
     /*RealType xmin=-1.0;
     RealType xmax=1.0;
@@ -61,9 +66,9 @@ int main(){
     fftw_free(in);
     fftw_free(out);*/
    
-    Hamiltonian H(nbasis);
-    H.update(n);
-    cout << *H.myHam() << endl;
+    //Hamiltonian H(nbasis);
+    //H.update(n);
+    //cout << *H.myHam() << endl;
     
     // self-consistently solve KS equation
     for (int step=0;step<max_it;step++){
