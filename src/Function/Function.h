@@ -10,6 +10,7 @@ take a real space coordinate and give back a number
 #include "../Basis/Basis.h"
 
 #include <vector>
+#include <map>
 
 class Function{
 protected:
@@ -19,6 +20,7 @@ protected:
     bool _initialized;  // is the basis initialized?
     bool _allocated;    // was memory allocated during initialization?
     bool _purePlaneWave; // is there only plane wave in the basis?
+    std::map<std::string,int> _Idx; // keep a map from basis description to idx for easy access
     
     VectorType *_grid;  // real space grid
     RealType _xmin, _xmax; int _nx;
@@ -29,12 +31,13 @@ public:
     bool purePlaneWave(){return _purePlaneWave;};
     void initGrid(RealType xmin, RealType xmax, int nx);
     void updateGrid();
+    int basisIndex(std::string identifier){return _Idx[identifier];};
     VectorType* myGrid(){return _grid;};
     Basis** myBasis(){return _b;};
     
     virtual ComplexType kEvaluate(PosType k){};             // evaluate in k space
     virtual ComplexType operator()(PosType r);              // purpose in life of a function (evaluate in real space)
-    virtual RealType& operator[](int i){return _c[i];};     // allow accessing and changing coeffients
+    virtual ComplexType& operator[](int i){return _c[i];};     // allow accessing and changing coeffients
     
     virtual void initBasis(std::vector<Basis*> B, ArrayType C); // initialized in the list of given basis
     virtual void initPlaneWaves(std::vector<PosType> K, ArrayType C);    // initialized in the list of given plane wave basis

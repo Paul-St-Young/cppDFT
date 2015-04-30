@@ -6,12 +6,13 @@
 
 class ExternalPotential : public Function{
 ParticleSet _pset;
+int _nbasis;
 public:
-    ExternalPotential(ParticleSet pset) : Function(0), _pset(pset) {};
+    ExternalPotential(ParticleSet pset,int nbasis) : Function(nbasis), _pset(pset),_nbasis(nbasis) {};
     ~ExternalPotential(){};
     
     ComplexType operator()(PosType r);              // override operator() since external potential is easy to calculate
-    void initPlaneWaves(std::vector<PosType> K);
+    void initPlaneWaves(std::vector<PosType> K, RealType L, int nx);
     
 };
 

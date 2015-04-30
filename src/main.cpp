@@ -17,9 +17,8 @@ using namespace std;
 int main(){
 
     int max_it=1;
-    int nbasis=26; // number of basis functions, k=(0,0,0) is thrown out
-    double L=1.0; // Bohr
-    double Ecut=10.0; // Hartree
+    double L=2.0; // Bohr
+    double Ecut=20.0; // Hartree
 
     // Put a hydrogen ion at the origin
     ParticlePool pPool(1);
@@ -38,37 +37,36 @@ int main(){
         for (int j=-maxIdx;j<=maxIdx;j++){
             for (int k=-maxIdx;k<=maxIdx;k++){
                 kvec << 2*M_PI/L*i,2*M_PI/L*j,2*M_PI/L*k;
-                if (i!=0 || j!=0 || k!=0) K.push_back(kvec);
+                if (0.5*kvec.squaredNorm()<Ecut)
+                    K.push_back(kvec);
             }
         }
     }
-    
-    // guess a density and initialize the potentials
-    Density             n(nbasis);
-    n.initPlaneWaves(K,ArrayType::Zero(nbasis)); n[1]=1;
-    
-    ExternalPotential   Vext(gPset);
-    Vext.initPlaneWaves(K);
-    
-    /*RealType xmin=-1.0;
-    RealType xmax=1.0;
-    const int nx=3;
-    RealType dx=(xmax-xmin)/nx;
-    
-    n.initGrid(xmin,xmax,nx);
-    fftw_complex *in, *out;
-    fftw_plan p;
-    in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * pow(nx,3) );
-    out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * pow(nx,3) );
-    p = fftw_plan_dft_3d(nx,nx,nx, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-    fftw_execute(p);
-    fftw_destroy_plan(p);
-    fftw_free(in);
-    fftw_free(out);*/
+    vector<PosType> K2; // density needs more basis
+    maxIdx*=2;
+    for (int i=-maxIdx;i<=maxIdx;i++){
+        for (int j=-maxIdx;j<=maxIdx;j++){
+            for (int k=-maxIdx;k<=maxIdx;k++){
+                kvec << 2*M_PI/L*i,2*M_PI/L*j,2*M_PI/L*k;
+                if (0.5*kvec.squaredNorm()<2*Ecut)
+                    K2.push_back(kvec);
+            }
+        }
+    }
+    cout << "Number of Wave Function Basis: " << K.size() << endl;
+    cout << "Number of Density Basis: " << K2.size() << endl;
+
+    ExternalPotential   Vext(gPset,K2.size());
+    Vext.initPlaneWaves(K2,L,23); // # of real space grid points must be odd to avoid r=0
    
-    //Hamiltonian H(nbasis);
-    //H.update(n);
-    //cout << *H.myHam() << endl;
+    Hamiltonian H(K2.size());
+    H.update(Vext);
+    
+    Eigen::SelfAdjointEigenSolver<MatrixType> eigensolver(*H.myHam());
+    cout << "The lowest eigenvalue of H is: " << eigensolver.eigenvalues()[0] << endl;
+    /*cout << "Here's a matrix whose columns are eigenvectors of A \n"
+        << "corresponding to these eigenvalues:\n"
+        << eigensolver.eigenvectors() << endl;*/
     
     // self-consistently solve KS equation
     for (int step=0;step<max_it;step++){

@@ -9,7 +9,7 @@
 typedef float                   RealType   ;
 typedef std::complex<RealType>  ComplexType;
 typedef Eigen::Vector3f         PosType    ;
-typedef Eigen::ArrayXf          ArrayType  ;
+typedef Eigen::Array<ComplexType,Eigen::Dynamic,1>                ArrayType ;
 typedef Eigen::Matrix<ComplexType,Eigen::Dynamic,Eigen::Dynamic>  MatrixType;
 typedef Eigen::Matrix<ComplexType,Eigen::Dynamic,1>               VectorType;
 

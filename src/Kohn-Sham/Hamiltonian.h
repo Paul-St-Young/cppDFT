@@ -1,15 +1,16 @@
 #ifndef _HAMILTONIAN_H
 #define _HAMILTONIAN_H
 
-#include "../Function/Density.h"
+#include "../Function/ExternalPotential.h"
 
 class Hamiltonian{
 int _nbasis; // size of basis set
+Basis** _b;  // basis set
 MatrixType* _H;
 public:
     Hamiltonian(int nbasis);
     ~Hamiltonian();
-    void update(Density& n);
+    void update(ExternalPotential& Vext);
     MatrixType* myHam(){return _H;};
 };
 

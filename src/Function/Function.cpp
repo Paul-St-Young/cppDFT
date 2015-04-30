@@ -32,6 +32,8 @@ void Function::initBasis(std::vector<Basis*> B, ArrayType C){
 void Function::initPlaneWaves(std::vector<PosType> K,ArrayType C){
     for (int i=0;i<_nbasis;i++){
         _b[i] = new PlaneWave(K[i]);
+        std::stringstream ss; ss << K[i][0] << " " << K[i][1] << " " << K[i][2];
+        _Idx[ss.str()]=i;
         _c[i]=C[i];
     }
     _initialized=true;

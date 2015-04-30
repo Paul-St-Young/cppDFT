@@ -1,5 +1,7 @@
 #include "ExternalPotential.h"
 
+#include <cmath>
+
 ComplexType ExternalPotential::operator()(PosType r){
     ComplexType pot(0,0);
     for (int i=0;i<_pset.n;i++){
@@ -8,24 +10,22 @@ ComplexType ExternalPotential::operator()(PosType r){
     return pot;
 }
 
-void ExternalPotential::initPlaneWaves(std::vector<PosType> K){
+void ExternalPotential::initPlaneWaves(std::vector<PosType> K, RealType L, int nx){
     ArrayType C=ArrayType::Zero(_nbasis);
-    Function::initPlaneWaves(K,C);
+    Function::initPlaneWaves(K,C); // allocate memory for plane wave objects **_b
     ComplexType I(0.0,1.0);
     PosType r;
-    RealType L=5.0;
-    RealType _xmin=-2.5, _xmax=2.5, dx=0.5;
-    this->initGrid(-2.5,2.5,10);
+    RealType _xmin=-L/2.0,_xmax=L/2.0, dx=(_xmax-_xmin)/nx;
+    this->initGrid(_xmin,_xmax,nx);
     this->updateGrid();
     for (int g=0;g<_nbasis;g++){
-        //_c[i] = 8*std::pow(M_PI,2)/_b[i]->k().squaredNorm();
         _c[g] = 0.0;
         for (int i=0;i<_nx;i++){
             for (int j=0;j<_nx;j++){
                 for (int k=0;k<_nx;k++){
                     r << dx*i+_xmin, dx*j+_xmin, dx*k+_xmin;
                     ComplexType kdotr(_b[g]->k().transpose()*r,0.0);
-                    _c[g] += 1/pow(L,3)*pow(dx,3)*(-1/r.norm());//*std::exp(-I*kdotr);
+                    _c[g] += std::exp(-I*kdotr)*(ComplexType)( 1.0/pow(L,3)*pow(dx,3)*(-1/r.norm()) );
                 }
             }
         }
