@@ -16,9 +16,11 @@ using namespace std;
 
 int main(){
 
-    int max_it=1;
-    double L=2.0; // Bohr
-    double Ecut=20.0; // Hartree
+    int nstep=20;
+    double dt=0.5;
+    double emass=800;
+    double L=5.0; // Bohr
+    double Ecut=2.0; // Hartree
 
     // Put a hydrogen ion at the origin
     ParticlePool pPool(1);
@@ -64,15 +66,28 @@ int main(){
     
     Eigen::SelfAdjointEigenSolver<MatrixType> eigensolver(*H.myHam());
     cout << "The lowest eigenvalue of H is: " << eigensolver.eigenvalues()[0] << endl;
-    /*cout << "Here's a matrix whose columns are eigenvectors of A \n"
-        << "corresponding to these eigenvalues:\n"
-        << eigensolver.eigenvectors() << endl;*/
     
+    
+    VectorType c = eigensolver.eigenvectors().col(0);
+    cout << c.squaredNorm() << endl;
+    VectorType oldc = VectorType::Zero(c.size());
+    for (int istep=0;istep<nstep;istep++){
+        c = 2*c-oldc+ pow(dt,2)/emass*( (*H.myHam())*c );
+        H.update(Vext);
+        // shake it
+        cout << c.squaredNorm() << endl;
+        oldc = c;
+    }
+    
+    cout << c << endl;
+    
+    /*
     // self-consistently solve KS equation
     for (int step=0;step<max_it;step++){
         
     
     }
+    */
     
 return 0;
 }
