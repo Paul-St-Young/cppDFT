@@ -13,6 +13,7 @@ public:
     
     ComplexType operator()(PosType r);              // override operator() since external potential is easy to calculate
     void initPlaneWaves(std::vector<PosType> K, RealType L, int nx);
+    void update(PosType R, RealType L, int nx);
     
 };
 

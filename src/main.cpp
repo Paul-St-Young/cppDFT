@@ -21,6 +21,7 @@ int main(){
     double emass=800;
     double L=5.0; // Bohr
     double Ecut=2.0; // Hartree
+    int nx=23; // # of real space grid points must be odd to avoid r=0
 
     // Put a hydrogen ion at the origin
     ParticlePool pPool(1);
@@ -59,7 +60,7 @@ int main(){
     cout << "Number of Density Basis: " << K2.size() << endl;
 
     ExternalPotential   Vext(gPset,K2.size());
-    Vext.initPlaneWaves(K2,L,23); // # of real space grid points must be odd to avoid r=0
+    Vext.initPlaneWaves(K2,L,nx); 
    
     Hamiltonian H(K2.size());
     H.update(Vext);
@@ -73,6 +74,7 @@ int main(){
     VectorType oldc = VectorType::Zero(c.size());
     for (int istep=0;istep<nstep;istep++){
         c = 2*c-oldc+ pow(dt,2)/emass*( (*H.myHam())*c );
+        Vext.update(gPset.ptcls[0]->r,L,nx);
         H.update(Vext);
         // shake it
         cout << c.squaredNorm() << endl;
