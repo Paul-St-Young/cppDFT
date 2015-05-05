@@ -3,43 +3,24 @@
 
 #include <sstream>
 
-Function::Function(int nbasis) : _nbasis(nbasis), _initialized(false), _allocated(false)
-  , _purePlaneWave(false), _grid_initialized(false) { 
-    _c.resize(_nbasis);
-    _b = new Basis*[_nbasis];
-};
-
+Function::Function(BasisSet* B) : _basisSet(B){
+    _c = ArrayType::Zero(_basisSet->size());
+    _grid_initialized=false;
+ };
+ 
+ Function::~Function(){
+    if (_grid_initialized) delete _grid;
+}
+ 
 ComplexType Function::operator()(PosType r){
-    if (!_initialized) throw _Function_UninitializedBasisError();
     ComplexType value=0;
     Basis* b;
-    for (int i=0;i<_nbasis;i++){
-        b = _b[i];
+    for (int i=0;i<_basisSet->size();i++){
+        b = _basisSet->basis(i);
         value += _c[i]*(*b)(r);
     }
     return value;
 };
-
-void Function::initBasis(std::vector<Basis*> B, ArrayType C){
-    for (int i=0;i<_nbasis;i++){
-        _b[i] = B[i];
-        _c[i] = C[i];
-    }
-    _initialized=true;
-    _allocated=false;
-}
-
-void Function::initPlaneWaves(std::vector<PosType> K,ArrayType C){
-    for (int i=0;i<_nbasis;i++){
-        _b[i] = new PlaneWave(K[i]);
-        std::stringstream ss; ss << K[i][0] << " " << K[i][1] << " " << K[i][2];
-        _Idx[ss.str()]=i;
-        _c[i]=C[i];
-    }
-    _initialized=true;
-    _allocated=true;
-    _purePlaneWave=true;
-}
 
 void Function::initGrid(RealType xmin, RealType xmax, int nx){
     _xmin=xmin; _xmax=xmax; _nx=nx;
@@ -60,13 +41,4 @@ void Function::updateGrid(){
     }
 }
 
-Function::~Function(){
-    if (_allocated){
-        for (int i=0;i<_nbasis;i++){
-            delete _b[i];
-        }
-    }
-    delete[] _b;
-    
-    if (_grid_initialized) delete _grid;
-}
+

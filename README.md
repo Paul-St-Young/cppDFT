@@ -8,7 +8,7 @@ Getting Started
     make
 
 ### to run
-    ./cppDFT 
+    ./cppDFT ../default.inp
 
 ### requirement
 1. cmake 2.8.8 or above
