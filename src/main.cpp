@@ -67,19 +67,23 @@ int main(int argc, char* argv[]){
     ff = new ForceField(&gPset);
     
     // use VelocityVerlet updator using the force field
-    Updator* updator = new VelocityVerlet(&gPset,ff); updator->h=dt;
+    VelocityVerlet updator(&gPset,ff); updator.h=dt;
     
     VectorType oldc = VectorType::Zero(c.size());
     for (int istep=0;istep<nstep;istep++){
+    
+        // move the ions first since this depend on c
+        updator.update(c);
+    
         // move the electrons
-        c = 2*c-oldc+ pow(dt,2)/emass*( (*H.myHam())*c );
-        Vext.updatePlaneWaves();
-        H.update(Vext);
-        // shake it
+        double lambda=0.0;
+        // SHAKE it for the correct lambda
+        c = 2*c-oldc+ pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
         oldc = c;
         
-        // move the ions
-        updator->update();
+        // update Hamiltonian
+        //Vext.updatePlaneWaves();
+        //H.update(Vext);
     }
     
 return 0;

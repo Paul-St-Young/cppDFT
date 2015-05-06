@@ -21,7 +21,6 @@ add_library(pset
 )
 
 add_library(updator 
-	${SRC_DIR}/Simulation/PeriodicBox.cpp
 	${SRC_DIR}/ForceField/Lennard-Jones.cpp
 	${SRC_DIR}/ForceField/ForceField.cpp
 	${SRC_DIR}/Updator/VelocityVerlet.cpp

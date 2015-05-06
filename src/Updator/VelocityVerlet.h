@@ -13,7 +13,7 @@ public:
 			_oldA.push_back(a);
 		}
 	};
-    void update();
+    void update(ArrayType c);
 };
 
 #endif

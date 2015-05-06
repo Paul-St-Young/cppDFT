@@ -1,8 +1,8 @@
 #include "VelocityVerlet.h"
 
-void VelocityVerlet::update(){
-	
-	_ff->apply();       // fill the acceleration in particle set
+void VelocityVerlet::update(ArrayType c){
+	// fill the acceleration in particle set
+	_ff->apply();
 	
 	// update positions and store acceleration
 	for (int i=0;i<_pset->n;i++){
@@ -14,7 +14,8 @@ void VelocityVerlet::update(){
 		}
 	}
 	
-	_ff->apply();       // get force at new positions
+	// get force at new positions
+	_ff->apply();
 	// update velocities
 	for (int i=0;i<_pset->n;i++){
 		for (int coord=0;coord<_MD_DIM;coord++){
