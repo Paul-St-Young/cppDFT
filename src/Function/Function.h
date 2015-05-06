@@ -17,19 +17,25 @@ protected:
     ArrayType _c; // coeffients
     
     VectorType *_grid;  // real space grid
-    RealType _xmin, _xmax; int _nx;
+    RealType _xmin, _xmax, _L; int _nx;
     bool _grid_initialized;
 public:
     Function(BasisSet* B);
     ~Function();
-    ComplexType coeff(int idx){return _c[idx];};    // basis function coeffients
+    virtual ComplexType operator()(PosType r);      // purpose in life of a function (evaluate in real space)
     
-    void initGrid(RealType xmin, RealType xmax, int nx);
-    void updateGrid();
-    VectorType* myGrid(){return _grid;};
-    void modifyCoeff(int idx, ComplexType myc){_c[idx]=myc;};
+    // access
+    virtual ComplexType coeff(int idx){return _c[idx];};    // basis function coeffients
+    virtual BasisSet* myBasisSet(){return _basisSet;};      // basis functions
+    virtual VectorType* myGrid(){return _grid;};            // real space grid
     
-    virtual ComplexType operator()(PosType r);              // purpose in life of a function (evaluate in real space)
+    // methods
+    virtual void initGrid(RealType L, int nx);
+    virtual void updateGrid();
+    virtual void updatePlaneWaves();
+    virtual void modifyCoeff(int idx, ComplexType myc){_c[idx]=myc;};
+    
+    
 };
 
 #endif

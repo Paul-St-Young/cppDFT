@@ -4,11 +4,10 @@
 #include "../Function/ExternalPotential.h"
 
 class Hamiltonian{
-int _nbasis; // size of basis set
-Basis** _b;  // basis set
+BasisSet* _wfBasis;
 MatrixType* _H;
 public:
-    Hamiltonian(int nbasis);
+    Hamiltonian(BasisSet* wfBasis);
     ~Hamiltonian();
     void update(ExternalPotential& Vext);
     MatrixType* myHam(){return _H;};

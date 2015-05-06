@@ -11,8 +11,6 @@ public:
     ~ExternalPotential(){};
     
     ComplexType operator()(PosType r); // override operator() since external potential is easy to calculate
-    void update(PosType R, RealType L, int nx);
-    void updatePlaneWaves(std::vector<PosType> K, RealType L, int nx);
     
 };
 

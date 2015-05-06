@@ -1,15 +1,17 @@
 #include <iostream>
 #include <vector>
-//#include <fftw3.h>
+#include <cmath>
+#define USE_MATH_DEFINES
 
 #include "Interface/InputManager.h"
 #include "Particle/ParticleSet.h"
 #include "Basis/BasisSet.h"
 #include "Function/ExternalPotential.h"
-//#include "Kohn-Sham/Hamiltonian.h"
+#include "Kohn-Sham/Hamiltonian.h"
 
-#include <cmath>
-#define USE_MATH_DEFINES
+#include "ForceField/Lennard-Jones.h"
+#include "ForceField/ForceField.h"
+#include "Updator/VelocityVerlet.h"
 
 using namespace std;
 
@@ -46,38 +48,39 @@ int main(int argc, char* argv[]){
     cout << "Number of Wave Function Basis: " << waveFunctionBasis.size() << endl;
     cout << "Number of Density Basis: " << densityBasis.size() << endl;
     
-    /*
-    ExternalPotential   Vext(gPset,K2.size());
-    Vext.initPlaneWaves(K2,L,nx); 
-   
-    Hamiltonian H(K2.size());
+    // construct external potential and Hamiltonian
+    ExternalPotential   Vext(&densityBasis,gPset);
+    Vext.initGrid(L,nx);
+    Vext.updatePlaneWaves();
+    Hamiltonian H(&waveFunctionBasis);
     H.update(Vext);
     
+    // diagonalize the Hamiltonian
     Eigen::SelfAdjointEigenSolver<MatrixType> eigensolver(*H.myHam());
     cout << "The lowest eigenvalue of H is: " << eigensolver.eigenvalues()[0] << endl;
-    
-    
     VectorType c = eigensolver.eigenvectors().col(0);
-    cout << c.squaredNorm() << endl;
+
+    // ---------- we are now ready to do MD ----------
+    
+    // build a force field (need to be based on the electron wave function aka c)
+    ForceField* ff;
+    ff = new ForceField(&gPset);
+    
+    // use VelocityVerlet updator using the force field
+    Updator* updator = new VelocityVerlet(&gPset,ff); updator->h=dt;
+    
     VectorType oldc = VectorType::Zero(c.size());
     for (int istep=0;istep<nstep;istep++){
+        // move the electrons
         c = 2*c-oldc+ pow(dt,2)/emass*( (*H.myHam())*c );
-        Vext.update(gPset.ptcls[0]->r,L,nx);
+        Vext.updatePlaneWaves();
         H.update(Vext);
         // shake it
-        cout << c.squaredNorm() << endl;
         oldc = c;
-    }
-    
-    cout << c << endl;
-    */
-    /*
-    // self-consistently solve KS equation
-    for (int step=0;step<max_it;step++){
         
-    
+        // move the ions
+        updator->update();
     }
-    */
     
 return 0;
 }

@@ -5,6 +5,7 @@
 
 // default to 3 dimensions
 #define _DFT_DIM 3 
+#define _MD_DIM 3 
 
 typedef float                   RealType   ;
 typedef std::complex<RealType>  ComplexType;
