@@ -6,6 +6,7 @@
 #include "Interface/InputManager.h"
 #include "Particle/ParticleSet.h"
 #include "Basis/BasisSet.h"
+#include "Function/Density.h"
 #include "Function/ExternalPotential.h"
 #include "Kohn-Sham/Hamiltonian.h"
 
@@ -59,12 +60,18 @@ int main(int argc, char* argv[]){
     Eigen::SelfAdjointEigenSolver<MatrixType> eigensolver(*H.myHam());
     cout << "The lowest eigenvalue of H is: " << eigensolver.eigenvalues()[0] << endl;
     VectorType c = eigensolver.eigenvectors().col(0);
-
+    
+    // create lowest KS orbital and its associated density
+    Function waveFunction(&waveFunctionBasis);
+    waveFunction.initCoeff(c);
+    Density density(&densityBasis);
+    density.updateWithWaveFunction(waveFunction);
+    
     // ---------- we are now ready to do MD ----------
     
-    // build a force field (need to be based on the electron wave function aka c)
+    // build a force field (need to be based on the electron wave function)
     ForceField* ff;
-    ff = new ForceField(&gPset);
+    ff = new ForceField(&gPset,&density,&Vext,0.05);
     
     // use VelocityVerlet updator using the force field
     VelocityVerlet updator(&gPset,ff); updator.h=dt;
@@ -72,14 +79,18 @@ int main(int argc, char* argv[]){
     VectorType oldc = VectorType::Zero(c.size());
     for (int istep=0;istep<nstep;istep++){
     
-        // move the ions first since this depend on c
-        updator.update(c);
+        // move the ions first since this depend on old waveFunction
+        updator.update(); // density is used in here by ForceField
     
         // move the electrons
         double lambda=0.0;
         // SHAKE it for the correct lambda
         c = 2*c-oldc+ pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
         oldc = c;
+        
+        // update density
+        waveFunction.initCoeff(c);
+        density.updateWithWaveFunction(waveFunction);
         
         // update Hamiltonian
         //Vext.updatePlaneWaves();

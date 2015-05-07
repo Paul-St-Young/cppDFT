@@ -33,6 +33,7 @@ add_library(basis
 
 add_library(func
 	${SRC_DIR}/Function/Function.cpp
+	${SRC_DIR}/Function/Density.cpp
 	${SRC_DIR}/Function/ExternalPotential.cpp
 	${SRC_DIR}/Kohn-Sham/Hamiltonian.cpp
 )

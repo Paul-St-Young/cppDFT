@@ -25,16 +25,17 @@ public:
     virtual ComplexType operator()(PosType r);      // purpose in life of a function (evaluate in real space)
     
     // access
-    virtual ComplexType coeff(int idx){return _c[idx];};    // basis function coeffients
+    virtual ComplexType coeff(int idx){return _c[idx];};    // basis function coeffient(idx)
     virtual BasisSet* myBasisSet(){return _basisSet;};      // basis functions
     virtual VectorType* myGrid(){return _grid;};            // real space grid
     
     // methods
     virtual void initGrid(RealType L, int nx);
+    virtual void initCoeff(VectorType c);
     virtual void updateGrid();
     virtual void updatePlaneWaves();
     virtual void modifyCoeff(int idx, ComplexType myc){_c[idx]=myc;};
-    
+    virtual ComplexType integrate(Function* other);
     
 };
 

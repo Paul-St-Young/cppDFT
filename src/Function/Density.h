@@ -5,7 +5,8 @@
 
 class Density : public Function {
 public:
-    Density(int nbasis) : Function(nbasis){};
+    Density(BasisSet* B) : Function(B){};
+    void updateWithWaveFunction(Function& wfs);
 };
 
 #endif

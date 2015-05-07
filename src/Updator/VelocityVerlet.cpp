@@ -1,6 +1,6 @@
 #include "VelocityVerlet.h"
 
-void VelocityVerlet::update(ArrayType c){
+void VelocityVerlet::update(){
 	// fill the acceleration in particle set
 	_ff->apply();
 	

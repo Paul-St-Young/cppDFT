@@ -7,11 +7,11 @@ Function::Function(BasisSet* B) : _basisSet(B){
     _c = ArrayType::Zero(_basisSet->size());
     _grid_initialized=false;
  };
- 
- Function::~Function(){
+
+Function::~Function(){
     if (_grid_initialized) delete _grid;
 }
- 
+
 ComplexType Function::operator()(PosType r){
     ComplexType value=0;
     Basis* b;
@@ -21,6 +21,12 @@ ComplexType Function::operator()(PosType r){
     }
     return value;
 };
+
+void Function::initCoeff(VectorType c){
+    for (int i=0;i<c.size();i++){
+        _c[i]=c[i];
+    }
+}
 
 void Function::initGrid(RealType L, int nx){
     _L = L;
@@ -70,4 +76,16 @@ if (_grid_initialized and _basisSet->purePlaneWave()){
 }
 }
 
+ComplexType Function::integrate(Function* other){
+ComplexType value(0.0,0.0);
+if (_basisSet->purePlaneWave() and other->myBasisSet()->purePlaneWave()){
+// if both functions are expanded in pw basis, integration is easy
+    for (int i=0;i<_basisSet->size();i++){
+        PosType k = _basisSet->basis(i)->k();
+        std::stringstream ss; ss << -k[0] << " " << -k[1] << " " << -k[2];
+        value += _c[i]*other->coeff( other->myBasisSet()->basisIndex(ss.str()) );
+    }
+}
+return value;
+}
 
