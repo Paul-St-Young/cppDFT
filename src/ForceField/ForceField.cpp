@@ -18,7 +18,7 @@ void ForceField::apply(){
 	    for (int coord=0;coord<_MD_DIM;coord++){
             // finite difference
             _pset->ptcls[i]->r[coord] += _dx;
-            //_Vext->updatePlaneWaves();
+            _Vext->updatePlaneWaves();
             pot = _density->integrate(_Vext);
             _pset->ptcls[i]->a[coord] = ( -(pot-currentPot)/_dx ).real();
             // put back particle

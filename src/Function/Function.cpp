@@ -48,16 +48,16 @@ void Function::updateGrid(){
     }
 }
 
+
 void Function::updatePlaneWaves(){
 // call initGrid before calling this method
 if (_grid_initialized and _basisSet->purePlaneWave()){
     ComplexType I(0.0,1.0); // imaginary I
-
+    #pragma omp parallel for
     for (int g=0;g<_basisSet->size();g++){
         // get the coeffient before each plane wave basis by Fourier
         _c[g] = 0.0;
         Basis* b = _basisSet->basis(g);
-        
         PosType r;
         RealType dx=(_xmax-_xmin)/_nx;
         for (int i=0;i<_nx;i++){

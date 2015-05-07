@@ -2,6 +2,12 @@ cmake_minimum_required (VERSION 2.8.8)
 project (cppDFT)
 set (SRC_DIR src)
 
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
 set(CMAKE_CXX_FLAGS "-std=c++11")
 
 # find eigen
@@ -43,5 +49,5 @@ add_executable(cppDFT
     ${SRC_DIR}/Interface/InputManager.cpp
 	${SRC_DIR}/main.cpp
 )
-target_link_libraries(cppDFT pset updator func basis m fftw3)
+target_link_libraries(cppDFT pset updator basis func m)
 

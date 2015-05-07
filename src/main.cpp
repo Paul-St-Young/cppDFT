@@ -76,16 +76,34 @@ int main(int argc, char* argv[]){
     // use VelocityVerlet updator using the force field
     VelocityVerlet updator(&gPset,ff); updator.h=dt;
     
-    VectorType oldc = VectorType::Zero(c.size());
+    //VectorType oldc = VectorType::Zero(c.size());
+    VectorType oldc=c;
+    ComplexType lambda=eigensolver.eigenvalues()[0]; // Lagrange Multiplier
     for (int istep=0;istep<nstep;istep++){
     
         // move the ions first since this depend on old waveFunction
         updator.update(); // density is used in here by ForceField
     
         // move the electrons
-        double lambda=0.0;
+        //cout << c.norm() << endl;
+        //c = 2*c-oldc-pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
         // SHAKE it for the correct lambda
-        c = 2*c-oldc+ pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
+        cout << "c.norm()=" << c.norm() << endl;
+        VectorType uc; // uncontraint c
+        uc = 2*c-oldc-pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
+        ComplexType usigma(-1.0,0.0);
+        for (int i=0;i<uc.size();i++){
+            usigma += conj( uc[i] )*uc[i];
+        }
+        cout << "usigma=" << usigma << endl;
+        ComplexType dot(0.0,0.0);
+        for (int i=0;i<uc.size();i++){
+            dot += conj( uc[i] )*conj( c[i] )/(ComplexType)emass;
+        }
+        lambda = usigma/dot;
+        for (int i=0;i<uc.size();i++){
+            c[i] = uc[i]-conj( c[i] )*lambda*(ComplexType)(pow(dt,2)/emass);
+        }
         oldc = c;
         
         // update density
@@ -93,8 +111,8 @@ int main(int argc, char* argv[]){
         density.updateWithWaveFunction(waveFunction);
         
         // update Hamiltonian
-        //Vext.updatePlaneWaves();
-        //H.update(Vext);
+        Vext.updatePlaneWaves();
+        H.update(Vext);
     }
     
 return 0;
