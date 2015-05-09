@@ -2,6 +2,8 @@
 #include "../Basis/PlaneWave.h"
 
 #include <sstream>
+#include <iostream>
+using namespace std;
 
 Function::Function(BasisSet* B) : _basisSet(B){
     _c = ArrayType::Zero(_basisSet->size());
@@ -53,7 +55,7 @@ void Function::updatePlaneWaves(){
 // call initGrid before calling this method
 if (_grid_initialized and _basisSet->purePlaneWave()){
     ComplexType I(0.0,1.0); // imaginary I
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(static,1)
     for (int g=0;g<_basisSet->size();g++){
         // get the coeffient before each plane wave basis by Fourier
         _c[g] = 0.0;
@@ -82,8 +84,12 @@ if (_basisSet->purePlaneWave() and other->myBasisSet()->purePlaneWave()){
 // if both functions are expanded in pw basis, integration is easy
     for (int i=0;i<_basisSet->size();i++){
         PosType k = _basisSet->basis(i)->k();
-        std::stringstream ss; ss << -k[0] << " " << -k[1] << " " << -k[2];
-        value += _c[i]*other->coeff( other->myBasisSet()->basisIndex(ss.str()) );
+        PosType kneg = -k;
+        
+        //cout << " label " << other->myBasisSet()->basisIndex(ss.str()) << endl;
+        int idx=(i-(_basisSet->size()-1)/2+_basisSet->size())%_basisSet->size();
+        //cout << " refle " << (i-(_basisSet->size()-1)/2+_basisSet->size())%_basisSet->size() << endl;
+        value += _c[i]*other->coeff( idx );
     }
 }
 return value;

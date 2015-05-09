@@ -1,7 +1,7 @@
+#include "ParticleSet.h"
+
 #include <iostream>
 #include <fstream>
-
-#include "ParticleSet.h"
 
 void ParticleSet::appendFile(std::string filename){
     std::ofstream fs;
@@ -10,8 +10,8 @@ void ParticleSet::appendFile(std::string filename){
         fs << std::endl << n << std::endl;
         for (int i=0;i<n;i++){
             fs << i;
-            for (int coord=0;coord<_DFT_DIM;coord++){
-                fs << " " << ptcls[i]->r(coord);
+            for (int coord=0;coord<_MD_DIM;coord++){
+                fs << " " << ptcls[i]->r[coord];
             } fs << std::endl;
         }
     }
@@ -25,4 +25,10 @@ std::string ParticleSet::str(){
         if (i!=n-1) os << std::endl;
     }
     return os.str();
+}
+
+void ParticleSet::clearFile(std::string filename){
+    std::ifstream fs;
+    fs.open(filename.c_str(),std::ios::out);
+    fs.close();
 }

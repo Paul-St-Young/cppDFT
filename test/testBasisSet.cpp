@@ -25,6 +25,21 @@ TEST(BasisSetTest,addPlaneWave){
 	EXPECT_EQ(B.basisIndex(ss.str()),0);
 }
 
+TEST(BasisSetTest,add2PlaneWave){
+    BasisSet B(1);
+    PosType k;
+	k << 1,0,0;
+	B.addPlaneWave(k);
+	k << 0,1,0;
+	B.addPlaneWave(k);
+	EXPECT_EQ(B.size(),2);
+	EXPECT_EQ(B.basis(0)->id(),0);
+	std::stringstream ss; ss << "0 1 0";
+	EXPECT_EQ(B.basisIndex(ss.str()),1);
+	ss << "1 0 0";
+	EXPECT_EQ(B.basisIndex(ss.str()),0);
+}
+
 // ----------------------- Test modifyCoeff ----------------------- //
 /*
 TEST(BasisSetTest,modifyCoeff){
@@ -45,6 +60,10 @@ TEST(BasisSetTest,initPlaneWaves){
     for(map<string,int>::iterator it = m.begin(); it != m.end(); ++it) {
         cout << it->first << endl;
     }
+    std::stringstream ss; ss << "-1.25664 0 -1.25664";
+	EXPECT_EQ(B.basisIndex(ss.str()),1);
+	ss << "0.0 0.0 0.0";
+	EXPECT_EQ(B.basisIndex(ss.str()),9);
 }
 
 // ======================= Test Main ======================= //

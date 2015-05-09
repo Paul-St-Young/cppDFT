@@ -2,7 +2,8 @@
 
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
 
-./cppDFT
+export OMP_NUM_THREADS=4
+./cppDFT ../default.inp

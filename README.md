@@ -4,14 +4,15 @@ Getting Started
 ### To build
     mkdir build
     cd build
-    cmake ..
-    make
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    make -j4
 
 ### to run
+    export OMP_NUM_THREADS=8
     ./cppDFT ../default.inp
 
 ### requirement
-1. cmake 2.8.8 or above
+1. cmake 2.8.6 or above
 2. c++11 compatible compiler
 3. eigen3 include directory saved in EIGEN3\_INCLUDE\_DIR environment variable
 
@@ -38,8 +39,13 @@ A particle is basically a collection of attributes such as posiotion, velocity, 
 
 ### Basis
 * PlaneWave
+* Gaussian
 
 A basis function takes a position and returns a value
+
+### BasisSet
+
+A basis set is simply a collection of basis functions with some methods to create, destroy and access these basis functions.
 
 ### Function
 * Density

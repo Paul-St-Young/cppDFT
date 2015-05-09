@@ -7,9 +7,12 @@ void Density::updateWithWaveFunction(Function& wfs){
         for (int j=0;j<wfs.myBasisSet()->size();j++){
             PosType kj = wfs.myBasisSet()->basis(j)->k();
             ComplexType cj = wfs.coeff(j);
-            PosType kimkj=ki-kj;
-            std::stringstream ss; ss << kimkj[0] << " " << kimkj[1] << " " << kimkj[2];
-            _c[ _basisSet->basisIndex(ss.str()) ] = ci*cj;
+            PosType kjmki=kj-ki;
+            std::stringstream ss; //ss << kjmki[0] << " " << kjmki[1] << " " << kjmki[2];
+            ss << (kjmki[0]==0?0:kjmki[0]) << " ";
+            ss << (kjmki[1]==0?0:kjmki[1]) << " ";
+            ss << (kjmki[2]==0?0:kjmki[2]);
+            _c[ _basisSet->basisIndex(ss.str()) ] = conj(ci)*cj;
         }
     }
 

@@ -1,14 +1,14 @@
-cmake_minimum_required (VERSION 2.8.8)
+cmake_minimum_required (VERSION 2.8.6)
 project (cppDFT)
 set (SRC_DIR src)
+
+set(CMAKE_CXX_FLAGS "-std=c++11")
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
-
-set(CMAKE_CXX_FLAGS "-std=c++11")
 
 # find eigen
 set(EIGEN3_DIR "$ENV{EIGEN3_INCLUDE_DIR}")
@@ -44,10 +44,14 @@ add_library(func
 	${SRC_DIR}/Kohn-Sham/Hamiltonian.cpp
 )
 
+add_library(estimator
+	${SRC_DIR}/Estimator/KineticEnergyEstimator.cpp
+)
+
 # link executable
 add_executable(cppDFT
     ${SRC_DIR}/Interface/InputManager.cpp
 	${SRC_DIR}/main.cpp
 )
-target_link_libraries(cppDFT pset updator basis func m)
+target_link_libraries(cppDFT pset updator estimator basis func m)
 
