@@ -1,9 +1,6 @@
 #include "Function.h"
 #include "../Basis/PlaneWave.h"
 
-#include <sstream>
-#include <iostream>
-using namespace std;
 
 Function::Function(BasisSet* B) : _basisSet(B){
     _c = ArrayType::Zero(_basisSet->size());

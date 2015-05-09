@@ -1,8 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
-#define USE_MATH_DEFINES
-
 #include "Interface/InputManager.h"
 #include "Particle/ParticleSet.h"
 #include "Basis/BasisSet.h"
@@ -10,7 +5,6 @@
 #include "Function/ExternalPotential.h"
 #include "Kohn-Sham/Hamiltonian.h"
 
-#include "ForceField/Lennard-Jones.h"
 #include "ForceField/ForceField.h"
 #include "Updator/VelocityVerlet.h"
 #include "Estimator/KineticEnergyEstimator.h"
@@ -44,10 +38,10 @@ int main(int argc, char* argv[]){
     cout << gPset.str() << endl;
     
     // choose a basis set
-    BasisSet waveFunctionBasis(nbasis);
-    BasisSet densityBasis(pow(2,_DFT_DIM)*nbasis);
-    waveFunctionBasis.initPlaneWaves(Ecut,L);
-    densityBasis.initPlaneWaves(2*Ecut,L);
+    BasisSet waveFunctionBasis(nbasis,L);
+    BasisSet densityBasis(pow(2,_DFT_DIM)*nbasis,L);
+    waveFunctionBasis.initPlaneWaves(Ecut);
+    densityBasis.initPlaneWaves(2*Ecut);
     cout << "Number of Wave Function Basis: " << waveFunctionBasis.size() << endl;
     cout << "Number of Density Basis: " << densityBasis.size() << endl;
     
@@ -87,14 +81,15 @@ int main(int argc, char* argv[]){
     
     gPset.ptcls[0]->r[1] = 0.05;
     ComplexType lambda=eigensolver.eigenvalues()[0]; // Lagrange Multiplier
-    double Tn, Te; // kinetic energy of ions and electrons
+    RealType Tn, Te, E; // kinetic energy of ions and electrons
     gPset.clearFile(traj);
     for (int istep=0;istep<nstep;istep++){
         gPset.appendFile(traj);
         VectorType conjc=c;
         for (int i=0;i<c.size();i++) conjc[i]=conj( conjc[i] );
         Tn = kinetic->scalarEvaluate();
-        cout << "E= " << conjc.transpose()*(*H.myHam())*c << endl;
+        E = ( conjc.transpose()*(*H.myHam())*c )(0,0).real()+Tn;
+        cout << "( " << E << "," << Tn << ")" << endl; 
         // move the ions first since this depend on old waveFunction
         updator.update(); // density is used in here by ForceField
     

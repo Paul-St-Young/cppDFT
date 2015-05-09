@@ -1,6 +1,5 @@
 #include "ForceField.h"
-#include <iostream>
-using namespace std;
+
 void ForceField::apply(){
 
 	// zero out acceleration

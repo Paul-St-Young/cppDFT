@@ -35,16 +35,16 @@ add_executable(setTest
     ${SRC_DIR}/Basis/BasisSet.cpp
 )
 
-add_executable(functionTest 
-    ../testFunction.cpp
-    ${SRC_DIR}/Basis/PlaneWave.cpp
-    ${SRC_DIR}/Basis/Gaussian.cpp
-    ${SRC_DIR}/Basis/BasisSet.cpp
-    ${SRC_DIR}/Function/Function.cpp
-)
+#add_executable(functionTest 
+#    ../testFunction.cpp
+#    ${SRC_DIR}/Basis/PlaneWave.cpp
+#    ${SRC_DIR}/Basis/Gaussian.cpp
+#    ${SRC_DIR}/Basis/BasisSet.cpp
+#    ${SRC_DIR}/Function/Function.cpp
+#)
 
 target_link_libraries(particleTest ${GTEST_LIBRARIES} pthread)
 target_link_libraries(basisTest ${GTEST_LIBRARIES} pthread)
 target_link_libraries(setTest ${GTEST_LIBRARIES} pthread)
-target_link_libraries(functionTest ${GTEST_LIBRARIES} pthread)
+#target_link_libraries(functionTest ${GTEST_LIBRARIES} pthread)
 

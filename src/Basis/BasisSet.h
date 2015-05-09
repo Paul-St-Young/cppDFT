@@ -14,9 +14,10 @@ int _nbasis;        // number of basis functions
 int _nadded;        // number of basis functions added so far
 Basis** _b;         // list of basis functions
 bool _purePlaneWave;// is there only plane wave in the basis?
+RealType _L; // length of periodic box
 std::map<std::string,int> _idxMap; // keep a map from basis description to idx for easy access
 public:
-    BasisSet(int nbasis);
+    BasisSet(int nbasis, RealType L);
     ~BasisSet();
     // access
     Basis* basis(int idx){return _b[idx];};         // basis function
@@ -26,7 +27,8 @@ public:
     std::map<std::string,int> myMap(){return _idxMap;};
     // methods
     void addPlaneWave(PosType k);
-    void initPlaneWaves(RealType Ecut, RealType L);
+    void initPlaneWaves(RealType Ecut);
+    int basisIndex(PosType kvec);
 };
 
 #endif

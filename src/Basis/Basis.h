@@ -6,7 +6,6 @@ A basis function takes a real space coordinate and gives back a number
 #define _BASIS_H
 
 #include "../Interface/TypeFactory.h"
-#include <iostream>
 
 class Basis{
 protected:

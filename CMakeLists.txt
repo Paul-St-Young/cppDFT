@@ -26,8 +26,7 @@ add_library(pset
 	${SRC_DIR}/Particle/ParticleSet.cpp
 )
 
-add_library(updator 
-	${SRC_DIR}/ForceField/Lennard-Jones.cpp
+add_library(updator
 	${SRC_DIR}/ForceField/ForceField.cpp
 	${SRC_DIR}/Updator/VelocityVerlet.cpp
 )

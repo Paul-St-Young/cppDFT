@@ -9,24 +9,25 @@ using namespace std;
 #include <map>
 // ----------------------- Test Constructor ----------------------- //
 TEST(BasisSetTest,Constructor){
-    BasisSet B(1);
+    BasisSet B(1,1.0);
 	EXPECT_EQ(B.size(),0);
 }
 
 // ----------------------- Test addPlaneWave ----------------------- //
 TEST(BasisSetTest,addPlaneWave){
-    BasisSet B(1);
+    BasisSet B(1,1.0);
     PosType k;
 	k << 1,0,0;
 	B.addPlaneWave(k);
 	EXPECT_EQ(B.size(),1);
 	EXPECT_EQ(B.basis(0)->id(),0);
-	std::stringstream ss; ss << "1 0 0";
-	EXPECT_EQ(B.basisIndex(ss.str()),0);
+	//std::stringstream ss; ss << "1 0 0";
+	//EXPECT_EQ(B.basisIndex(ss.str()),0);
 }
 
 TEST(BasisSetTest,add2PlaneWave){
-    BasisSet B(1);
+    RealType L=1.0;
+    BasisSet B(1,L);
     PosType k;
 	k << 1,0,0;
 	B.addPlaneWave(k);
@@ -34,10 +35,10 @@ TEST(BasisSetTest,add2PlaneWave){
 	B.addPlaneWave(k);
 	EXPECT_EQ(B.size(),2);
 	EXPECT_EQ(B.basis(0)->id(),0);
-	std::stringstream ss; ss << "0 1 0";
-	EXPECT_EQ(B.basisIndex(ss.str()),1);
-	ss << "1 0 0";
-	EXPECT_EQ(B.basisIndex(ss.str()),0);
+	//std::stringstream ss; ss << "0 1 0";
+	//EXPECT_EQ(B.basisIndex(ss.str()),1);
+	//ss << "1 0 0";
+	//EXPECT_EQ(B.basisIndex(ss.str()),0);
 }
 
 // ----------------------- Test modifyCoeff ----------------------- //
@@ -54,16 +55,27 @@ TEST(BasisSetTest,modifyCoeff){
 
 // ----------------------- Test initPlaneWaves ----------------------- //
 TEST(BasisSetTest,initPlaneWaves){
-    BasisSet B(100);
-    B.initPlaneWaves(2.0,5.0);
+    BasisSet B(100,5.0);
+    B.initPlaneWaves(2.0);
     map<string,int> m = B.myMap();
     for(map<string,int>::iterator it = m.begin(); it != m.end(); ++it) {
-        cout << it->first << endl;
+        cout << "m[\"" << it->first << "\"]=" << it->second << endl;
     }
-    std::stringstream ss; ss << "-1.25664 0 -1.25664";
-	EXPECT_EQ(B.basisIndex(ss.str()),1);
-	ss << "0.0 0.0 0.0";
-	EXPECT_EQ(B.basisIndex(ss.str()),9);
+    std::stringstream ss; ss << "-1 0 -1";
+	EXPECT_EQ( 1,B.basisIndex(ss.str()) );
+	ss.str("");ss << "0 0 0";
+	EXPECT_EQ( 9,B.basisIndex(ss.str()) );
+}
+// ----------------------- Test basisIndex(kvec) ----------------------- //
+TEST(BasisSetTest,basisIndex){
+    RealType L=5.0;
+    BasisSet B(100,L);
+    B.initPlaneWaves(2.0);
+    PosType kvec;
+    kvec << 0,0,0;
+	EXPECT_EQ( 9,B.basisIndex(kvec) );
+	kvec << 2*M_PI/L,0,0;
+	EXPECT_EQ( 16,B.basisIndex(kvec) );
 }
 
 // ======================= Test Main ======================= //
