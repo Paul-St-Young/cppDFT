@@ -28,6 +28,7 @@ public:
     virtual ComplexType coeff(int idx){return _c[idx];};    // basis function coeffient(idx)
     virtual BasisSet* myBasisSet(){return _basisSet;};      // basis functions
     virtual VectorType* myGrid(){return _grid;};            // real space grid
+    virtual int size(){ return _basisSet->size(); };
     
     // methods
     virtual void initGrid(RealType L, int nx);

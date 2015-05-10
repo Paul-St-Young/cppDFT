@@ -15,7 +15,7 @@ void BasisSet::addPlaneWave(PosType kvec){
     // save current index and increment
     int idx = _nadded++; 
     // add a pw basis
-    _b[idx] = new PlaneWave(kvec,idx);
+    _b[idx] = new PlaneWave(kvec,_L,idx);
     // assume periodic boundary
     int i = (int)( kvec[0]*_L/(2*M_PI) );
     int j = (int)( kvec[1]*_L/(2*M_PI) );

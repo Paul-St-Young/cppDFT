@@ -77,6 +77,20 @@ TEST(BasisSetTest,basisIndex){
 	kvec << 2*M_PI/L,0,0;
 	EXPECT_EQ( 16,B.basisIndex(kvec) );
 }
+// ----------------------- Test grab zero ----------------------- //
+TEST(BasisSetTest,zero){
+    RealType L=5.0;
+    BasisSet B(100,L);
+    B.initPlaneWaves(2.0);
+    PosType kvec;
+    kvec << 0,0,-0;
+	EXPECT_EQ( 9,B.basisIndex(kvec) );
+    kvec << 0,0,2;
+    PosType kvec1;
+    kvec1 << 0,0,2;
+	EXPECT_EQ( 9,B.basisIndex(kvec1-kvec) );
+	EXPECT_EQ( 9,B.basisIndex(kvec-kvec1) );
+}
 
 // ======================= Test Main ======================= //
 int main(int argc, char **argv){

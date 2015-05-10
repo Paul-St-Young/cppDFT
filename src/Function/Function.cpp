@@ -1,7 +1,6 @@
 #include "Function.h"
 #include "../Basis/PlaneWave.h"
 
-
 Function::Function(BasisSet* B) : _basisSet(B){
     _c = ArrayType::Zero(_basisSet->size());
     _grid_initialized=false;
@@ -81,11 +80,10 @@ if (_basisSet->purePlaneWave() and other->myBasisSet()->purePlaneWave()){
 // if both functions are expanded in pw basis, integration is easy
     for (int i=0;i<_basisSet->size();i++){
         PosType k = _basisSet->basis(i)->k();
-        PosType kneg = -k;
+        int idx = _basisSet->basisIndex(-k);
+        // alternative way to calculate index
+        //int idx=(i-(_basisSet->size()-1)/2+_basisSet->size())%_basisSet->size();
         
-        //cout << " label " << other->myBasisSet()->basisIndex(ss.str()) << endl;
-        int idx=(i-(_basisSet->size()-1)/2+_basisSet->size())%_basisSet->size();
-        //cout << " refle " << (i-(_basisSet->size()-1)/2+_basisSet->size())%_basisSet->size() << endl;
         value += _c[i]*other->coeff( idx );
     }
 }

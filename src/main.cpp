@@ -22,6 +22,7 @@ int main(int argc, char* argv[]){
     int nstep = atoi( manager["CPMD"]["nstep"].c_str() );
     double dt = atof( manager["CPMD"]["dt"].c_str() );
     double emass = atof( manager["CPMD"]["emass"].c_str() );
+    double thres = atof( manager["CPMD"]["conv_thr"].c_str() );
     double L = atof( manager["DFT"]["L"].c_str() );
     double Ecut = atof( manager["DFT"]["Ecut"].c_str() );
     int nbasis = atoi( manager["DFT"]["maxBasis"].c_str() );
@@ -48,54 +49,32 @@ int main(int argc, char* argv[]){
     // construct external potential and Hamiltonian
     ExternalPotential   Vext(&densityBasis,gPset);
     Vext.initGrid(L,nx);
-    Vext.updatePlaneWaves();
+    Vext.updatePlaneWaves(); // obtain expansion coefficients for Vext
     Hamiltonian H(&waveFunctionBasis);
-    H.update(Vext);
+    H.update(Vext); // obtain expansion coefficients for Hamiltonian
     
     // diagonalize the Hamiltonian
     Eigen::SelfAdjointEigenSolver<MatrixType> eigensolver(*H.myHam());
-    cout << "The lowest eigenvalue of H is: " << eigensolver.eigenvalues()[0] << endl;
+    ComplexType lambda=eigensolver.eigenvalues()[0]; // Lagrange Multiplier
+    cout << "The lowest eigenvalue of H is: " << lambda.real() << endl;
     VectorType c = eigensolver.eigenvectors().col(0);
     
-    // create lowest KS orbital and its associated density
-    Function waveFunction(&waveFunctionBasis);
-    waveFunction.initCoeff(c);
-    Density density(&densityBasis);
-    density.updateWithWaveFunction(waveFunction);
+    // mess up the electronic ground state a little
+    RealType E,norm;
+    c = c.Random(c.size())/100.+c;
+    c /= c.norm();
+    E = ( c.adjoint()*(*H.myHam())*c )(0,0).real();
+    cout << "Energy after slight electronic perturbation: " << E << endl;
     
-    // ---------- we are now ready to do MD ----------
-    
-    // build a force field (need to be based on the electron wave function)
-    ForceField* ff;
-    ff = new ForceField(&gPset,&density,&Vext,0.01);
-    
-    // use VelocityVerlet updator using the force field
-    VelocityVerlet updator(&gPset,ff); updator.h=dt;
-    
-    // throw in some estimators
-    Estimator *kinetic;
-    kinetic     = new KineticEnergyEstimator(gPset);
-    
-    //VectorType oldc = VectorType::Zero(c.size());
+    // See that CP can bring back the ground state
     VectorType oldc=c;
-    
-    gPset.ptcls[0]->r[1] = 0.05;
-    ComplexType lambda=eigensolver.eigenvalues()[0]; // Lagrange Multiplier
-    RealType Tn, Te, E; // kinetic energy of ions and electrons
-    gPset.clearFile(traj);
+    RealType oldE=E;
     for (int istep=0;istep<nstep;istep++){
-        gPset.appendFile(traj);
-        VectorType conjc=c;
-        for (int i=0;i<c.size();i++) conjc[i]=conj( conjc[i] );
-        Tn = kinetic->scalarEvaluate();
-        E = ( conjc.transpose()*(*H.myHam())*c )(0,0).real()+Tn;
-        cout << "( " << E << "," << Tn << ")" << endl; 
-        // move the ions first since this depend on old waveFunction
-        updator.update(); // density is used in here by ForceField
     
-        // move the electrons
-        //c = 2*c-oldc-pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
-        
+        // update Hamiltonian
+        Vext.updatePlaneWaves();
+        H.update(Vext);
+    
         // SHAKE it for the correct lambda
         VectorType uc; // uncontraint c
         uc = 2*c-oldc-pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
@@ -108,19 +87,88 @@ int main(int argc, char* argv[]){
             dot += conj( uc[i] )*conj( c[i] )/(ComplexType)emass;
         }
         lambda = usigma/dot;
+        
+        // move the electrons
+        for (int i=0;i<uc.size();i++){
+            c[i] = uc[i]-conj( c[i] )*lambda*(ComplexType)(dt/emass);
+        }
+        
+        // report properties
+        norm = c.norm();
+        E = ( c.adjoint()*(*H.myHam())*c )(0,0).real();
+        cout << "( " << E << "," << norm << ")" << endl; 
+        
+        if (abs(E-oldE)<thres) break;
+        
+        oldc = c; 
+        oldE = E;
+    }
+    
+    
+    /*
+    // ---------- we are now ready to do MD ----------
+    
+    // create lowest KS orbital and its associated density
+    Function waveFunction(&waveFunctionBasis);
+    Density density(&densityBasis);
+    
+    // build a force field (need to be based on the electron wave function)
+    ForceField* ff;
+    ff = new ForceField(&gPset,&density,&Vext,0.01);
+    
+    // use VelocityVerlet updator using the force field
+    VelocityVerlet updator(&gPset,ff); updator.h=dt;
+    
+    // throw in some estimators
+    Estimator *kinetic;
+    kinetic     = new KineticEnergyEstimator(gPset);
+    
+    VectorType oldc=c;
+    gPset.ptcls[0]->r[1] = 0.05;
+    RealType Tn, Te, E, norm; // kinetic energy of ions and electrons
+    gPset.clearFile(traj);
+    for (int istep=0;istep<nstep;istep++){
+        
+        // save trajectory
+        gPset.appendFile(traj);
+    
+        // update Hamiltonian
+        Vext.updatePlaneWaves();
+        H.update(Vext);
+        
+        // update density because it is used by the force field
+        waveFunction.initCoeff(c);
+        density.updateWithWaveFunction(waveFunction);
+        
+        // report properties
+        norm = c.norm();
+        Tn = kinetic->scalarEvaluate();
+        E = ( c.adjoint()*(*H.myHam())*c )(0,0).real() + Tn;
+        cout << "( " << E << "," << Tn << "," << norm << ")" << endl; 
+        
+        // move the ions first since this depend on old waveFunction
+        updator.update(); // density is used in here by ForceField
+    
+        // SHAKE it for the correct lambda
+        VectorType uc; // uncontraint c
+        uc = 2*c-oldc-pow(dt,2)/emass*( (*H.myHam())*c -lambda*c );
+        ComplexType usigma(-1.0,0.0);
+        for (int i=0;i<uc.size();i++){
+            usigma += conj( uc[i] )*uc[i];
+        }
+        ComplexType dot(0.0,0.0);
+        for (int i=0;i<uc.size();i++){
+            dot += conj( uc[i] )*conj( c[i] )/(ComplexType)emass;
+        }
+        lambda = usigma/dot;
+        
+        // move the electrons
         for (int i=0;i<uc.size();i++){
             c[i] = uc[i]-conj( c[i] )*lambda*(ComplexType)(dt/emass);
         }
         oldc = c;
- 
-        // update density
-        waveFunction.initCoeff(c);
-        density.updateWithWaveFunction(waveFunction);
         
-        // update Hamiltonian
-        Vext.updatePlaneWaves();
-        H.update(Vext);
     }
-    
+    */
 return 0;
 }

@@ -1,13 +1,14 @@
 DFT:
-    L           5.0     # box size in Bohr
-    Ecut        2.0     # plane wave cutoff in Hatree
-    maxBasis    100     # max number of basis (should be calculated from L and Ecut)
+    L           8.0     # box size in Bohr
+    Ecut        4.0     # plane wave cutoff in Hatree
+    maxBasis    1000    # max number of basis (should be calculated from L and Ecut)
     ngrid       23      # number of points per dimension of real space grid, must be odd to avoid 1/r being 0
     
 CPMD:
     nstep       1000    # number of simulation steps
-    dt          0.1     # time step
+    dt          0.5     # time step
     emass       100     # fictitious mass of the KS orbitals
+    conv_thr    1e-6    # energy convergence
     
 output:
     trajectory  myTrajectory.xyz
