@@ -65,7 +65,8 @@ int main(int argc, char* argv[]){
     c /= c.norm();
     E = ( c.adjoint()*(*H.myHam())*c )(0,0).real();
     cout << "Energy after slight electronic perturbation: " << E << endl;
-    
+    cout << "Starting energy minimization " << endl;
+    cout << "(Energy, Norm)" << endl; 
     // See that CP can bring back the ground state
     VectorType oldc=c;
     RealType oldE=E;
@@ -104,8 +105,6 @@ int main(int argc, char* argv[]){
         oldE = E;
     }
     
-    
-    /*
     // ---------- we are now ready to do MD ----------
     
     // create lowest KS orbital and its associated density
@@ -122,11 +121,14 @@ int main(int argc, char* argv[]){
     // throw in some estimators
     Estimator *kinetic;
     kinetic     = new KineticEnergyEstimator(gPset);
-    
-    VectorType oldc=c;
+  
+    cout << "Finished energy minimization, perturb the ion to new position " << endl; 
     gPset.ptcls[0]->r[1] = 0.05;
-    RealType Tn, Te, E, norm; // kinetic energy of ions and electrons
+    cout << gPset.str() << endl;
+    RealType Tn, Te; // kinetic energy of ions and electrons
     gPset.clearFile(traj);
+    cout << "Starting molecular dynamics " << endl;
+    cout << "(Total Energy,Ion Kenetic, Norm)" << endl; 
     for (int istep=0;istep<nstep;istep++){
         
         // save trajectory
@@ -169,6 +171,5 @@ int main(int argc, char* argv[]){
         oldc = c;
         
     }
-    */
 return 0;
 }
